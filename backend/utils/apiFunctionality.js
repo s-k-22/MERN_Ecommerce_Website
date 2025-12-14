@@ -25,6 +25,13 @@ class APIFunctionality {
     this.query = this.query.find(queryCopy);
     return this;
   }
+
+  pagination(resultsPerPage) {
+    const currentPage = Number(this.queryStr.page) || 1;
+    const skip = resultsPerPage * (currentPage - 1); //products shown on currentPage(4) = (skip -> 3*(4-1) = 9) =  10,11,12
+    this.query =this.query.limit(resultsPerPage).skip(skip);
+    return this;
+  }
 }
 
 export default APIFunctionality;

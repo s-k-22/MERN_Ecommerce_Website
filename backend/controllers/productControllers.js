@@ -11,13 +11,35 @@ export const createProducts = wrapAsync(async (req, res, next) => {
 
 //get products (R)
 export const getAllProducts = wrapAsync(async (req, res, next) => {
+  const resultPerPage = 3;
   const apiFunctionality = new APIFunctionality(Product.find(), req.query)
     .search()
     .filter();
 
-  const products = await apiFunctionality.query;
+  // pagination on filtered products - based on category etc
+  const filteredQuery = apiFunctionality.query.clone();
+  const productCnt = await filteredQuery.countDocuments();
+  const totalPages = Math.ceil(productCnt / resultPerPage);
+  const page = Number(req.query.page) || 1;
+  if (page > totalPages && productCnt > 0) {
+    return next(new HandleError("This page does not exist", 404));
+  }
 
-  res.status(200).json({ success: true, products });
+  apiFunctionality.pagination(resultPerPage);
+
+  const products = await apiFunctionality.query;
+  if (!products) {
+    return next(new HandleError("Product not found", 404));
+  }
+
+  res.status(200).json({
+    success: true,
+    products,
+    resultPerPage,
+    productCnt,
+    totalPages,
+    currentPage: page,
+  });
 });
 
 //update product (U)
