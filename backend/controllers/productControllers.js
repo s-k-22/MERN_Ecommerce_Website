@@ -1,6 +1,7 @@
 import Product from "../models/productModel.js";
 import HandleError from "../utils/handleError.js";
 import wrapAsync from "../middleware/wrapAsyncError.js";
+import APIFunctionality from "../utils/apiFunctionality.js";
 
 //creating products (C)
 export const createProducts = wrapAsync(async (req, res, next) => {
@@ -10,7 +11,12 @@ export const createProducts = wrapAsync(async (req, res, next) => {
 
 //get products (R)
 export const getAllProducts = wrapAsync(async (req, res, next) => {
-  const products = await Product.find();
+  const apiFunctionality = new APIFunctionality(Product.find(), req.query)
+    .search()
+    .filter();
+
+  const products = await apiFunctionality.query;
+
   res.status(200).json({ success: true, products });
 });
 
