@@ -23,11 +23,17 @@ export const loginUser = wrapAsyncError(async (req, res, next) => {
     return next(new HandleError("Email or Password is empty", 400));
   }
 
-  const user = await User.findOne({ email });
+  const user = await User.findOne({ email }).select("+password");
 
   if (!user) {
-    return next(new HandleError("Invalid Email or Password", 400));
+    return next(new HandleError("Invalid Email", 400));
   }
+
+  const isPasswordValid = await user.verifyPassword(password);
+  if (!isPasswordValid) {
+    return next(new HandleError("Wrong Password", 400));
+  }
+
   const token = user.getJWTToken();
   res.status(200).json({ success: true, user, token });
 });
