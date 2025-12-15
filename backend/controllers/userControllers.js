@@ -1,6 +1,7 @@
 import wrapAsyncError from "../middleware/wrapAsyncError.js";
 import User from "../models/userModel.js";
 import HandleError from "../utils/handleError.js";
+import { sendToken } from "../utils/jwtToken.js";
 
 export const registerUser = wrapAsyncError(async (req, res, next) => {
   const { name, password, email } = req.body;
@@ -11,10 +12,8 @@ export const registerUser = wrapAsyncError(async (req, res, next) => {
     avatar: { public_id: "this is temp id", url: "this is temp url" },
   });
 
-  const token = user.getJWTToken();
-
   //creating new resource -> 201
-  res.status(201).json({ success: true, user, token });
+  sendToken(user, 201, res);
 });
 
 export const loginUser = wrapAsyncError(async (req, res, next) => {
@@ -34,6 +33,5 @@ export const loginUser = wrapAsyncError(async (req, res, next) => {
     return next(new HandleError("Wrong Password", 400));
   }
 
-  const token = user.getJWTToken();
-  res.status(200).json({ success: true, user, token });
+  sendToken(user, 200, res);
 });
