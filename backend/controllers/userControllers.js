@@ -5,10 +5,12 @@ export const registerUser = wrapAsyncError(async (req, res, next) => {
   const { name, password, email } = req.body;
   const user = await User.create({
     name,
-    email, 
+    email,
     password,
     avatar: { public_id: "this is temp id", url: "this is temp url" },
   });
 
-  res.status(200).json({ success: true, user });
+  const token = user.getJWTToken();
+
+  res.status(200).json({ success: true, user, token });
 });
