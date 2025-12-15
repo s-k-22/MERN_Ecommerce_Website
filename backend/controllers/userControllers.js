@@ -1,5 +1,6 @@
 import wrapAsyncError from "../middleware/wrapAsyncError.js";
 import User from "../models/userModel.js";
+import HandleError from "../utils/handleError.js";
 
 export const registerUser = wrapAsyncError(async (req, res, next) => {
   const { name, password, email } = req.body;
@@ -12,5 +13,21 @@ export const registerUser = wrapAsyncError(async (req, res, next) => {
 
   const token = user.getJWTToken();
 
+  //creating new resource -> 201
+  res.status(201).json({ success: true, user, token });
+});
+
+export const loginUser = wrapAsyncError(async (req, res, next) => {
+  const { email, password } = req.body;
+  if (!email || !password) {
+    return next(new HandleError("Email or Password is empty", 400));
+  }
+
+  const user = await User.findOne({ email });
+
+  if (!user) {
+    return next(new HandleError("Invalid Email or Password", 400));
+  }
+  const token = user.getJWTToken();
   res.status(200).json({ success: true, user, token });
 });
