@@ -10,7 +10,7 @@ export default (err, req, res, next) => {
     err = new HandleError(message, 404);
   }
 
-  //for unique fields in db
+  //for unique fields in db -> mongodb duplicate key error
   if (err.code === 11000) {
     const message = `This ${Object.keys(
       err.keyValue

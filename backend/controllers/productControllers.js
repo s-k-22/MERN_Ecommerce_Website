@@ -1,16 +1,16 @@
 import Product from "../models/productModel.js";
 import HandleError from "../utils/handleError.js";
-import wrapAsync from "../middleware/wrapAsyncError.js";
 import APIFunctionality from "../utils/apiFunctionality.js";
+import wrapAsyncError from "../middleware/wrapAsyncError.js";
 
 //creating products (C)
-export const createProducts = wrapAsync(async (req, res, next) => {
+export const createProducts = wrapAsyncError(async (req, res, next) => {
   const product = await Product.create(req.body);
   res.status(201).json({ success: true, product });
 });
 
 //get products (R)
-export const getAllProducts = wrapAsync(async (req, res, next) => {
+export const getAllProducts = wrapAsyncError(async (req, res, next) => {
   const resultPerPage = 3;
   const apiFunctionality = new APIFunctionality(Product.find(), req.query)
     .search()
@@ -43,7 +43,7 @@ export const getAllProducts = wrapAsync(async (req, res, next) => {
 });
 
 //update product (U)
-export const updateProduct = wrapAsync(async (req, res, next) => {
+export const updateProduct = wrapAsyncError(async (req, res, next) => {
   const product = await Product.findByIdAndUpdate(req.params.id, req.body, {
     new: true,
     runValidators: true,
@@ -59,7 +59,7 @@ export const updateProduct = wrapAsync(async (req, res, next) => {
 });
 
 //delete product (D)
-export const deleteProduct = wrapAsync(async (req, res, next) => {
+export const deleteProduct = wrapAsyncError(async (req, res, next) => {
   const product = await Product.findByIdAndDelete(req.params.id);
   if (!product) {
     return next(new HandleError("Product Not Found", 404));
@@ -70,7 +70,7 @@ export const deleteProduct = wrapAsync(async (req, res, next) => {
 });
 
 //get single Product
-export const getSingleProduct = wrapAsync(async (req, res, next) => {
+export const getSingleProduct = wrapAsyncError(async (req, res, next) => {
   const product = await Product.findById(req.params.id);
   if (!product) {
     return next(new HandleError("Product Not Found", 404));
