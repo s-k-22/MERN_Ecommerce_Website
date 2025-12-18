@@ -2,6 +2,7 @@ import wrapAsyncError from "../middleware/wrapAsyncError.js";
 import User from "../models/userModel.js";
 import HandleError from "../utils/handleError.js";
 import { sendToken } from "../utils/jwtToken.js";
+import { sendEmail } from "../utils/sendEmail.js";
 
 export const registerUser = wrapAsyncError(async (req, res, next) => {
   const { name, password, email } = req.body;
@@ -65,6 +66,15 @@ export const resetPasswordRequest = wrapAsyncError(async (req, res, next) => {
   const msg = `Hello,Click the link below to reset your password. This link is valid for 30 minutes:\n\n ${resetPasswordURL}.\n\n If you did not request this, please ignore this email.`;
   try {
     //send email functionality
+    await sendEmail({
+      email: user.email,
+      subject: "Password reset request",
+      msg,
+    });
+    
+    res
+      .status(200)
+      .json({ success: true, message: `Email sent to ${user.email} successfully.` });
   } catch (error) {
     user.resetPasswordToken = undefined;
     user.resetPasswordExpire = undefined;
