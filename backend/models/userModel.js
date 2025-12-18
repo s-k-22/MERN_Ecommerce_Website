@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import validator from "validator";
 import bcryptjs from "bcryptjs";
 import jwt from "jsonwebtoken";
+import crypto from "crypto"
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -64,5 +65,13 @@ userSchema.methods.getJWTToken = function () {
 userSchema.methods.verifyPassword = async function (userEnteredPassword) {
   return await bcryptjs.compare(userEnteredPassword, this.password);
 };
+
+//reset password token
+userSchema.methods.generateResetPassToken = function(){
+  const resetToken = crypto.randomBytes(20).toString('hex');
+  this.resetPasswordToken = crypto.createHash('sha256').update(resetToken).digest('hex');
+  this.resetPasswordExpire = Date.now()+ 30*60*1000; //30min
+  return resetToken;
+}
 
 export default mongoose.model("User", userSchema);
