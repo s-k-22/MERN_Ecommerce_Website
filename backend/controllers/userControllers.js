@@ -43,3 +43,25 @@ export const logout = wrapAsyncError(async (req, res, next) => {
   });
   res.status(200).json({ success: true, message: "Successfully Logged Out." });
 });
+
+export const resetPasswordRequest = wrapAsyncError(async (req, res, next) => {
+  const { email } = req.body;
+  const user = await User.findOne({ email });
+  if (!user) {
+    return next(new HandleError("User doesn't exist", 404));
+  }
+  let resetToken;
+  try {
+    resetToken = user.generateResetPassToken();
+    console.log(resetToken);
+    
+    await user.save({ validateBeforeSave: false });
+    console.log(user);
+    
+  } catch (error) {
+    console.log(error);
+    return next(
+      new HandleError("Could not save reset token. Please try again later", 400)
+    );
+  }
+});
