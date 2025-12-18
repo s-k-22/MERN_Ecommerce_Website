@@ -5,6 +5,7 @@ import wrapAsyncError from "../middleware/wrapAsyncError.js";
 
 //creating products (C)
 export const createProducts = wrapAsyncError(async (req, res, next) => {
+  req.body.user = req.user.id; //from token
   const product = await Product.create(req.body);
   res.status(201).json({ success: true, product });
 });
