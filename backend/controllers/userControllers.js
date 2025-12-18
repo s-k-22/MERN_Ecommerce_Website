@@ -53,15 +53,24 @@ export const resetPasswordRequest = wrapAsyncError(async (req, res, next) => {
   let resetToken;
   try {
     resetToken = user.generateResetPassToken();
-    console.log(resetToken);
-    
     await user.save({ validateBeforeSave: false });
-    console.log(user);
-    
   } catch (error) {
     console.log(error);
     return next(
       new HandleError("Could not save reset token. Please try again later", 400)
+    );
+  }
+
+  const resetPasswordURL = `http://localhost:8000/reset/${resetToken}`;
+  const msg = `Hello,Click the link below to reset your password. This link is valid for 30 minutes:\n\n ${resetPasswordURL}.\n\n If you did not request this, please ignore this email.`;
+  try {
+    //send email functionality
+  } catch (error) {
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpire = undefined;
+    await user.save({ validateBeforeSave: false });
+    next(
+      new HandleError("Email could not be sent. Please try again later.", 500)
     );
   }
 });
