@@ -5,7 +5,6 @@ import User from "../models/userModel.js";
 
 export const verifyUserAuth = wrapAsyncError(async (req, res, next) => {
   const { token } = req.cookies;
-  console.log(token);
 
   if (!token) {
     return next(
