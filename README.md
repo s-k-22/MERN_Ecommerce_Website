@@ -69,3 +69,28 @@ eg. logging undefined variable
 CastError -> id of diff length
 
 ============================================================================================
+
+utils -> in apiFunctionality.js create apiFunctionality class -> search, filter, pagination <br>
+`const apiFunctionality =  await new apiFunctionality(Product.find(),req.query).search().filter()` -> query(mongoose) and queryStr(in url)<br>
+_for chaining dont forget to return **this** from apiFunctinality methods._
+
+**Search functionality** (according to name field)<br>
+`Product.find({name:"product"})` -> returns products with complete name product and not keyword in name. So need to use $regex.<br>
+`search()` -> `this.query.find({...keyword})` where `keyword = this.queryStr.keyword ? {name:{$regex:this.queryStr.keyword,options:"i"}} :{}` <br>
+
+**Filter functionality** (according to category field)<br>
+we're going to pass keyword, page, limit, category as query to url. we need to remove all other queries except category<br>
+`filter()` -> `this.query.find(queryCopy)`
+
+**Pagination functionality with limit and skip**<br>
+we need to find which products to show acc to page number.<br>
+_skip = resultsPerPage * (page -1)_ -> on page 3, skip first 6 products<br>
+`this.query = this.query.limit(resultsPerPage).skip(skip)`<br>
+
+now we need to paginate filtered projects. eg. in product category we've 4 products then only 2 pages are needed.<br>
+clone the `filteredQuery = apiFunctionality.query.clone();` and then count the no of Documents using `filteredQuery.countDocuments();`<br>
+totalPages = Math.ceil(noOfProducts/resultsPerPage);<br>
+if(page>totalPages) then return error and then call pagination using `apiFunctionality.pagination(3)`
+
+============================================================================================
+
