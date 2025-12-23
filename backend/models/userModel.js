@@ -63,7 +63,7 @@ userSchema.methods.getJWTToken = function () {
 
 //verify password
 userSchema.methods.verifyPassword = async function (userEnteredPassword) {
-  return await bcryptjs.compare(userEnteredPassword, this.password);
+  return await bcryptjs.compare(userEnteredPassword.toString(), this.password);
 };
 
 //reset password token
@@ -73,6 +73,7 @@ userSchema.methods.generateResetPassToken = function () {
     .createHash("sha256")
     .update(resetToken)
     .digest("hex");
+    
   this.resetPasswordExpire = Date.now() + 30 * 60 * 1000; //30min
   return resetToken;
 };
