@@ -125,7 +125,44 @@ pass verifyUserAuth in router file before controllers that need auth first.
 **Logout functionality**<br>
 `res.cookies("token",null,{expires:new Date(Date.now()),httpOnly:true})` httpOnly means can access using server only not by javaScript. 
 
+**Role Based Access**<br>
+Now only admin can create/delete/update products. So, we need to give role based access<br>
+assign role:admin manually in database to only one user. default role is user.<br>
+`if (!roles.includes(req.user.role))` then throw error else `next()` we are getting req.user.role from jwt token.<br>
+pass roleBasedAccess in router file before controllers that need admin access.
+
+**Refer User Model ID in Product Model**<br>
+`user: { type: mongoose.Schema.ObjectId, ref: "User", required: true }` -> we need user info to see which user is getting what products.
+
 ============================================================================================
 
-Now only admin can create/delete/update products. So, we need to give **role based access**<br>
+What if we forget password? <br>
+Why do we need passwordResetToken -> to prove ownership of email and same user is resetting the password who requested for it.
+
+**generatePasswordResetToken method in userModel**<br>
+generate resetToken using crypto.<br>
+hash the resetToken and assign it to resetPasswordToken (not stored in db yet) and also return resetToken.<br>
+`this.resetPasswordExpireTime:Date.now() + 30*60*60` -> 30 min
+
+**ForgotPassword Controller and Route** -> "/forgot/password"<br>
+find user with email from req.body.<br>
+store hashedResetToken in db using user.save().
+
+**Generate password reset URL**<br>
+`url = `localhost:8000/reset/${resetToken}`` -> without hashing -> we're going to pass the same link in the email with some msg.<br>
+if token is not found or time expires then set both values undefined in DB.<br>
+
+**Nodemailer** (finally sending email with reset password link)<br>
+code to send email. check their website. createTransport() and sendMail() methods.
+
+On clicking link in the email, it goes to `http://localhost:8000/reset/0a64c4bb88c3ad4715a6c877bf2badbab31b23ba`.<br>
+fetch user details from db using token's hash with crypto.<br>
+we'll get {password, confirmPassword} in req.body.<br>
+`user.password = password;` and set resetPasswordToken,resetPasswordExpire as undefined.<br>
+`user.save();` -> new password will be saved in db.
+
+============================================================================================
+
+
+
 
