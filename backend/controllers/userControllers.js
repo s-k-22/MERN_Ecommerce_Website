@@ -120,3 +120,8 @@ export const resetPassword = wrapAsyncError(async (req, res, next) => {
   await user.save();
   sendToken(user, 200, res);
 });
+
+export const getUserDetails = wrapAsyncError(async (req, res, next) => {
+  const user = await User.find({ _id: req.user.id });
+  res.status(200).json({ success: true, user });
+});
