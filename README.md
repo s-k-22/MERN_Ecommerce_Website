@@ -29,6 +29,8 @@ GET     → find <br>
 PUT     → findByIdAndUpdate -> req.params.id, req.body, {new:true,runValidators:true}-> /:id <br>
 DELETE  → findByIdAndDelete -> req.params.id -> /:id <br>
 
+`app.use(express.json())` -> parse json data(req.body) into js object because express doesn't understand JSON
+
 ============================================================================================
 
 **Backend Error Handling** <br>
@@ -48,7 +50,7 @@ ways to handle async errors -> try-catch, wrapasync, process.on("unhandledReject
 📍 _Without Error.captureStackTrace -> lot of messages on terminal when error occurs<br>
 With -> exact message where real problem is_ <br>
 
- `if (!product) return next(new HandleError("Product Not Found", 404));` -> If you DON’T want the rest of the function to run after errMiddleware → use return.<br>
+ `if (!product) return next(new HandleError("Product Not Found", 404));` -> If you DON’T want the rest of the functions to run after errMiddleware → use return.<br>
  eg. Sending wrong id with same length (product not found)
 
 2.WrapAsyncError Function + Error Middleware <br>
@@ -93,4 +95,37 @@ totalPages = Math.ceil(noOfProducts/resultsPerPage);<br>
 if(page>totalPages) then return error and then call pagination using `apiFunctionality.pagination(3)`
 
 ============================================================================================
+
+**Create User Model**<br>
+give select:false to password field -> don't select password while sending response or data manipulation.
+
+**Register functionality** <br>
+Hash password using **bcryptjs** in user model -> `userSchema.pre("save", function(){this.pass = bcryptjs.hash(this.pass,10})`<br>
+
+**jsonwebtoken** -> http protocol is stateless so after every api request it loses control of exactly which user was making req. instead of sending user details in every http protocol, we just create jwt token on login and keep it handy.<br>
+We need to generate token and send it in response to store in cookie.<br>
+In User model -> `userSchema.methods.getJWTToken = function (){ return jwt.sign({id:this._id},secret_key,{expiresIn:"3d"})}` <br>
+`const token = user.getJWTToken();` and `res.json({success:true,token});`
+
+**MongoDB duplicate key error** -> if we enter duplicate email -> err.code===11000 then return Object.keys(err.keyValue) already exist -> global err middleware.
+
+**Login Functionality**<br>
+`const user = await User.findOne({email}).select("+password")` <br>
+verify password in userModel -> `userSchema.methods.verifyPassword = function(userEnteredPassword){return await bcryptjs.compare(userEnteredPassword, this.password)};`<br>
+In userController, call this method
+
+**Store jwt token in cookie**<br>
+res.status(200).cookie("token",token,options).json(success:true,token)
+
+**User Authentication** (verifyUserAuth functionality) -> public and private pages(user need to login to see these)<br>
+`const {token} = req.cookies` -> just like req.body, req.cookies needs middleware to understood by express -> `app.use(cookieParser());`<br>
+`decodedData = jwt.verify(token,secret_key);` then find the user using decodedData.id and assign it to req.user.and _call next()_ <br>
+pass verifyUserAuth in router file before controllers that need auth first.
+
+**Logout functionality**<br>
+`res.cookies("token",null,{expires:new Date(Date.now()),httpOnly:true})` httpOnly means can access using server only not by javaScript. 
+
+============================================================================================
+
+Now only admin can create/delete/update products. So, we need to give **role based access**<br>
 
