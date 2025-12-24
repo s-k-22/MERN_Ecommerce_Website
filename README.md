@@ -163,6 +163,27 @@ we'll get {password, confirmPassword} in req.body.<br>
 
 ============================================================================================
 
+**Get User Details**<br>
+details of user that logged in.
+
+**Update password**<br>
+{oldPass,newPass,confirmPass} = req.body;<br>
+find user logged in that want to update password using token<br>
+verify oldPass with DB pass is same and check if newPass,confirmPass is matching<br>
+save newPass in db.
+
+**Update user profile(name,email)** <br>
+
+update routes according to admin
+
+**Admin Routes** -> add verifyAuth, roleBasedAccess("admin") to routes.<br> 
+**Get admin Products** -> fetch all products and return.<br>
+**Get all Users** -> fetch all products and return.<br>
+**Get Single User Information** -> get -> /admin/user/:id -> req.params.id <br>
+**Update user role** -> put -> /admin/user/:id <br>
+**Delete user profile** -> delete -> /admin/user/:id
+
+============================================================================================
 
 
 
