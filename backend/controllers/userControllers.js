@@ -167,5 +167,25 @@ export const getAllUsers = wrapAsyncError(async (req, res, next) => {
 //admin - get single user
 export const getSingleUser = wrapAsyncError(async (req, res, next) => {
   const user = await User.findById(req.params.id);
+  if (!user) {
+    return next(new HandleError("user does not exist", 404));
+  }
   res.status(200).json({ success: true, user });
+});
+
+//admin - update user role
+export const updateUserRole = wrapAsyncError(async (req, res, next) => {
+  const { role } = req.body;
+  const user = await User.findByIdAndUpdate(
+    req.params.id,
+    { role },
+    { new: true, runValidators: true }
+  );
+
+  if (!user) {
+    return next(new HandleError("user does not exist", 404));
+  }
+  res
+    .status(200)
+    .json({ success: true, message: "User role is updated successfully" });
 });

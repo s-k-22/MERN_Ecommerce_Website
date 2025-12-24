@@ -10,6 +10,7 @@ import {
   updatePassword,
   updateProfile,
   getSingleUser,
+  updateUserRole,
 } from "../controllers/userControllers.js";
 import { roleBasedAccess, verifyUserAuth } from "../middleware/userAuth.js";
 const router = express.Router();
@@ -29,6 +30,7 @@ router
 
 router
   .route("/admin/user/:id")
-  .get(verifyUserAuth, roleBasedAccess("admin"), getSingleUser);
+  .get(verifyUserAuth, roleBasedAccess("admin"), getSingleUser)
+  .put(verifyUserAuth, roleBasedAccess("admin"), updateUserRole);
 
 export default router;
