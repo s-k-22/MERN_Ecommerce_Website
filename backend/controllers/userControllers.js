@@ -125,3 +125,23 @@ export const getUserDetails = wrapAsyncError(async (req, res, next) => {
   const user = await User.find({ _id: req.user.id });
   res.status(200).json({ success: true, user });
 });
+
+export const updatePassword = wrapAsyncError(async (req, res, next) => {
+  const { oldPassword, newPassword, confirmPassword } = req.body;
+
+  const user = await User.findById(req.user.id).select("+password");
+  const checkOldPassword = await user.verifyPassword(oldPassword);
+  if (!checkOldPassword) {
+    return next(
+      new HandleError("Password doesn't match with old password", 404)
+    );
+  }
+
+  if (newPassword !== confirmPassword) {
+    return next(new HandleError("Password doesn't match", 404));
+  }
+
+  user.password = newPassword;
+  await user.save();
+  sendToken(user, 200, res);
+});

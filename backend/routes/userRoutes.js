@@ -6,6 +6,7 @@ import {
   registerUser,
   resetPassword,
   resetPasswordRequest,
+  updatePassword,
 } from "../controllers/userControllers.js";
 import { verifyUserAuth } from "../middleware/userAuth.js";
 const router = express.Router();
@@ -16,5 +17,6 @@ router.route("/logout").post(logout);
 router.route("/forgot/password").post(resetPasswordRequest);
 router.route("/reset/:token").post(resetPassword);
 router.route("/profile").get(verifyUserAuth, getUserDetails);
+router.route("/update/password").post(verifyUserAuth, updatePassword);
 
 export default router;
