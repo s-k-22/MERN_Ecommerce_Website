@@ -123,3 +123,14 @@ export const createReviewForProduct = wrapAsyncError(async (req, res, next) => {
   await product.save({ validateBeforeSave: false });
   res.status(200).json({ success: true, product });
 });
+
+//get All product reviews
+export const getAllProductReviews = wrapAsyncError(async (req, res, next) => {
+  const product = await Product.findById(req.query.id);
+
+  if (!product) {
+    return next(new HandleError("Product not found", 404));
+  }
+
+  res.status(200).json({ success: true, reviews: product.reviews });
+});
