@@ -1,0 +1,39 @@
+import wrapAsyncError from "../middleware/wrapAsyncError.js";
+import HandleError from "../utils/handleError.js";
+import Order from "../models/orderModel.js";
+import Product from "../models/productModel.js";
+import User from "../models/userModel.js";
+
+export const createOrder = wrapAsyncError(async (req, res, next) => {
+  const {
+    shippingInfo,
+    orderItems,
+    paymentInfo,
+    itemPrice,
+    taxPrice,
+    shippingPrice,
+    totalPrice,
+  } = req.body;
+
+  const order = await Order.create({
+    shippingInfo,
+    orderItems,
+    paymentInfo,
+    itemPrice,
+    taxPrice,
+    shippingPrice,
+    totalPrice,
+    paidAt: Date.now(),
+    name: req.user._id,
+  });
+
+  res.status(201).json({ success: true, order });
+});
+
+export const getOrderDetails = wrapAsyncError(async (req, res, next) => {
+  const order = await Order.findById(req.params.id);
+  if (!order) {
+    return next(new HandleError("order not found", 400));
+  }
+  res.status(200).json({ success: true, order });
+});

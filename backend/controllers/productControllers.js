@@ -135,6 +135,7 @@ export const getAllProductReviews = wrapAsyncError(async (req, res, next) => {
   res.status(200).json({ success: true, reviews: product.reviews });
 });
 
+//delete review
 export const deleteReview = wrapAsyncError(async (req, res, next) => {
   const { productId, reviewId } = req.query;
   const product = await Product.findById(productId);
