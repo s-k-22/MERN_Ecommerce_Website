@@ -64,6 +64,10 @@ export const updateOrderStatus = wrapAsyncError(async (req, res, next) => {
     return next(new HandleError("order is already been delivered", 404));
   }
 
+  await Promise.all(
+    order.orderItems.map((item) => updateQuantity(item.product, item.quantity))
+  );
+
   order.orderStatus = req.body.status;
   if (order.orderStatus === "Delivered") {
     order.deliveredAt = Date.now();
@@ -72,3 +76,29 @@ export const updateOrderStatus = wrapAsyncError(async (req, res, next) => {
   res.status(200).json({ success: true });
 });
 
+//admin - update stock
+async function updateQuantity(id, quantity) {
+  const product = await Product.findById(id);
+  if (!product) {
+    return next(new HandleError("product not found", 404));
+  }
+  product.stock -= quantity;
+  await product.save({ validateBeforeSave: false });
+}
+
+//delete order
+export const deleteOrder = wrapAsyncError(async (req, res, next) => {
+  const order = await Order.findById(req.params.id);
+  if (!order) {
+    return next(new HandleError("order not found", 404));
+  }
+  if (order.orderStatus !== "Delivered") {
+    return next(
+      new HandleError("This order is under processing.Cannot be deleted", 404)
+    );
+  }
+  await Order.deleteOne({ _id: req.params.id });
+  res
+    .status(200)
+    .json({ success: true, message: "order deleted successfully" });
+});

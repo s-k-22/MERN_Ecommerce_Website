@@ -2,6 +2,7 @@ import express from "express";
 import {
   allMyOrders,
   createOrder,
+  deleteOrder,
   getAllOrders,
   getOrderDetails,
   updateOrderStatus,
@@ -15,7 +16,8 @@ router.route("/new/order").post(verifyUserAuth, createOrder);
 router
   .route("/admin/order/:id")
   .get(verifyUserAuth, roleBasedAccess("admin"), getOrderDetails)
-  .put(verifyUserAuth, roleBasedAccess("admin"), updateOrderStatus);
+  .put(verifyUserAuth, roleBasedAccess("admin"), updateOrderStatus)
+  .delete(verifyUserAuth, roleBasedAccess("admin"), deleteOrder);
 
 router.route("/orders/user").get(verifyUserAuth, allMyOrders);
 
