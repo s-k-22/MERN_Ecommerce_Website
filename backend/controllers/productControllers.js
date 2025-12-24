@@ -134,3 +134,27 @@ export const getAllProductReviews = wrapAsyncError(async (req, res, next) => {
 
   res.status(200).json({ success: true, reviews: product.reviews });
 });
+
+export const deleteReview = wrapAsyncError(async (req, res, next) => {
+  const { productId, reviewId } = req.query;
+  const product = await Product.findById(productId);
+  if (!product) {
+    return next(new HandleError("Product not found", 404));
+  }
+  const filteredReviews = product.reviews.filter(
+    (review) => review._id.toString() !== reviewId.toString()
+  );
+
+  product.reviews = filteredReviews;
+  product.numOfReviews = filteredReviews.length;
+
+  let sum = 0;
+  filteredReviews.forEach((review) => (sum += review.rating));
+  product.ratings =
+    filteredReviews.length > 0 ? sum / filteredReviews.length : 0;
+
+  await product.save({ validateBeforeSave: false });
+  res
+    .status(200)
+    .json({ success: true, message: "review is deleted successfully" });
+});
