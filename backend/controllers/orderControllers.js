@@ -47,5 +47,7 @@ export const allMyOrders = wrapAsyncError(async (req, res, next) => {
 //admin - get all the orders
 export const getAllOrders = wrapAsyncError(async (req, res, next) => {
   const orders = await Order.find();
-  res.status(200).json({ success: true, orders });
+  let totalAmount = 0;
+  orders.forEach((order) => (totalAmount += order.totalPrice));
+  res.status(200).json({ success: true, orders, totalAmount });
 });
