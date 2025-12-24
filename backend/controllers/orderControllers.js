@@ -38,7 +38,14 @@ export const getOrderDetails = wrapAsyncError(async (req, res, next) => {
   res.status(200).json({ success: true, order });
 });
 
+//logged in user - get all orders
 export const allMyOrders = wrapAsyncError(async (req, res, next) => {
   const orders = await Order.find({ user: req.user._id });
+  res.status(200).json({ success: true, orders });
+});
+
+//admin - get all the orders
+export const getAllOrders = wrapAsyncError(async (req, res, next) => {
+  const orders = await Order.find();
   res.status(200).json({ success: true, orders });
 });
