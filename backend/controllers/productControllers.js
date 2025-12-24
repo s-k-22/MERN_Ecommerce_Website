@@ -78,3 +78,9 @@ export const getSingleProduct = wrapAsyncError(async (req, res, next) => {
   }
   res.status(200).json({ success: true, product });
 });
+
+//admin - get all products
+export const getAdminProducts = wrapAsyncError(async (req, res, next) => {
+  const products = await Product.find();
+  res.status(200).json({ success: true, products });
+});

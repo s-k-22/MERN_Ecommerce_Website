@@ -157,3 +157,15 @@ export const updateProfile = wrapAsyncError(async (req, res, next) => {
     .status(200)
     .json({ success: true, message: "user is updated successfylly", user });
 });
+
+//admin - get all users
+export const getAllUsers = wrapAsyncError(async (req, res, next) => {
+  const users = await User.find();
+  res.status(200).json({ success: true, users });
+});
+
+//admin - get single user
+export const getSingleUser = wrapAsyncError(async (req, res, next) => {
+  const user = await User.findById(req.params.id);
+  res.status(200).json({ success: true, user });
+});
