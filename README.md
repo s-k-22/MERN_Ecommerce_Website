@@ -185,5 +185,30 @@ update routes according to admin
 
 ============================================================================================
 
+**update reviews array + numOfReviews + ratings**<br>
+user and admin both can create reviews. Update _Product Model_ fields.<br>
+reviews: [{user1 review details},{user2 review details}] <br>
+`{rating,comment,productId} = req.body;` -> find product using productId and update reviews field.<br>
+if user has already given a review then edit the same review else push new review to array.<br>
+calculate numOfReviews and ratings by using array length and avg.
 
+**Get All Product Reviews**<br>
+we can do it using params too but using req.query this time -> /reviews?id=productIdFromDB<br>
+if product with the given id exists then return product.reviews.
 
+**Delete product review**<br>
+we need productId and reviewId to know exactly which review of which productId we need to delete.<br>
+use filter() to get reviews except deleted one and calculate numOfReviews,ratings accordingly.<br>
+we can assign new values to product.fields.
+
+============================================================================================
+
+**Orders**<br>
+create order Schema
+
+**Create order**<br>
+simple create function but have so many fields so looks lengthy.
+
+**get single order details** -> req.params.id -> admin access
+
+============================================================================================
