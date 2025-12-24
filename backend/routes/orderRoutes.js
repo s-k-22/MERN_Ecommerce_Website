@@ -4,6 +4,7 @@ import {
   createOrder,
   getAllOrders,
   getOrderDetails,
+  updateOrderStatus,
 } from "../controllers/orderControllers.js";
 import { roleBasedAccess, verifyUserAuth } from "../middleware/userAuth.js";
 
@@ -13,7 +14,8 @@ router.route("/new/order").post(verifyUserAuth, createOrder);
 
 router
   .route("/admin/order/:id")
-  .get(verifyUserAuth, roleBasedAccess("admin"), getOrderDetails);
+  .get(verifyUserAuth, roleBasedAccess("admin"), getOrderDetails)
+  .put(verifyUserAuth, roleBasedAccess("admin"), updateOrderStatus);
 
 router.route("/orders/user").get(verifyUserAuth, allMyOrders);
 
