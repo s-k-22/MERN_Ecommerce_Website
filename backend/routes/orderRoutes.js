@@ -1,5 +1,6 @@
 import express from "express";
 import {
+  allMyOrders,
   createOrder,
   getOrderDetails,
 } from "../controllers/orderControllers.js";
@@ -13,4 +14,5 @@ router
   .route("/admin/order/:id")
   .get(verifyUserAuth, roleBasedAccess("admin"), getOrderDetails);
 
+router.route("/order/user").get(verifyUserAuth, allMyOrders);
 export default router;

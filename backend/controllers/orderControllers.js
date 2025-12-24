@@ -24,7 +24,7 @@ export const createOrder = wrapAsyncError(async (req, res, next) => {
     shippingPrice,
     totalPrice,
     paidAt: Date.now(),
-    name: req.user._id,
+    user: req.user._id,
   });
 
   res.status(201).json({ success: true, order });
@@ -36,4 +36,9 @@ export const getOrderDetails = wrapAsyncError(async (req, res, next) => {
     return next(new HandleError("order not found", 400));
   }
   res.status(200).json({ success: true, order });
+});
+
+export const allMyOrders = wrapAsyncError(async (req, res, next) => {
+  const orders = await Order.find({ user: req.user._id });
+  res.status(200).json({ success: true, orders });
 });
