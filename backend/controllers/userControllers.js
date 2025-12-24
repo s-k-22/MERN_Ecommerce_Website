@@ -145,3 +145,15 @@ export const updatePassword = wrapAsyncError(async (req, res, next) => {
   await user.save();
   sendToken(user, 200, res);
 });
+
+export const updateProfile = wrapAsyncError(async (req, res, next) => {
+  const { name, email } = req.body;
+  const updateOptions = { name, email };
+  const user = await User.findByIdAndUpdate(req.user.id, updateOptions, {
+    new: true,
+    runValidators: true,
+  });
+  res
+    .status(200)
+    .json({ success: true, message: "user is updated successfylly", user });
+});
