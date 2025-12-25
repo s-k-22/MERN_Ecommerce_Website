@@ -64,12 +64,14 @@ export const updateOrderStatus = wrapAsyncError(async (req, res, next) => {
     return next(new HandleError("order is already been delivered", 404));
   }
 
-  await Promise.all(
-    order.orderItems.map((item) => updateQuantity(item.product, item.quantity))
-  );
 
   order.orderStatus = req.body.status;
   if (order.orderStatus === "Delivered") {
+    await Promise.all(
+      order.orderItems.map((item) =>
+        updateQuantity(item.product, item.quantity)
+      )
+    );
     order.deliveredAt = Date.now();
   }
   await order.save({ validateBeforeSave: false });
