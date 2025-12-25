@@ -209,6 +209,26 @@ create order Schema
 **Create order**<br>
 simple create function but have so many fields so looks lengthy.
 
-**get single order details** -> req.params.id -> admin access
+**Admin - get single order details** -> req.params.id
 
-============================================================================================
+**All My Orders** -> get all orders of logged in user -> find({user:req.user._id})
+
+**Admin - Get All Orders** -> admin access and return orders and totalAmount
+
+**Admin - update order status + delieverd time** -> if req.body.status is "delivered" then update status and add time as Date.now()
+
+**Update Stock**<br>
+create user -> create product(admin) -> change stock in db -> create order(admin or user) -> update status to delivered(admin) -> product stock changes<br>
+if order is delievered then for all items in orderItems, call updateQty(productId,productQty) with map()<br>
+updateQty(id,qty) -> search product with id and change product.stock -= qty and product.save();
+
+**delete order** -> only if orderStatus is deliverd
+
+<hr>
+
+## Frontend
+
+
+
+
+
