@@ -227,6 +227,23 @@ updateQty(id,qty) -> search product with id and change product.stock -= qty and 
 <hr>
 
 ## Frontend
+**create frontend folder**
+
+_node_module in root folder -> need some packages in frontend + backend both._
+
+**Basic Setup**<br>
+create react app using vite ->` npm create vite@latest .`<br>
+To run app -> `npm run dev`<br>
+src -> delete assets folder,App.css file. Clear App.jsx -> rfce to create functional component. clear index.css
+
+`npm i react-router-dom` -> BrowserRouter,Routes,Route<br>
+download styling files
+
+**⚠️ImageSlider -> didn't pay attention -> optional**
+
+============================================================================================
+
+**Display Products**<br>
 
 
 
